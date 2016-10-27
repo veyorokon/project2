@@ -42,7 +42,7 @@ int main()
 
 	t.write("OutputFile.txt");
 	*/
-	t.read("OutputFile.txt");
+	t.read("Input.txt");
 	t.printSubTree(0);
 
 

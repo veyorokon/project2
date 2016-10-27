@@ -19,6 +19,9 @@
     <Text Include="OutputFile.txt">
       <Filter>Source Files</Filter>
     </Text>
+    <Text Include="Input.txt">
+      <Filter>Source Files</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
