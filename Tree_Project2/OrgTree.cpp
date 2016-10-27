@@ -64,7 +64,7 @@ TREENODEPTR OrgTree::find(string title) {
 	string current = dataArr[0][0];
 	int indx = 0;
 	while (indx < dataArr.size()) {
-		cout << "CURRENT: " << current << ". TITLE: " << title << ". INDX: " << indx << endl;
+		//cout << "CURRENT: " << current << ". TITLE: " << title << ". INDX: " << indx << endl;
 		if (current == title)return indx;
 		indx++;
 		if(indx < dataArr.size()) current = dataArr[indx][0];
@@ -204,24 +204,21 @@ bool OrgTree::read(string filename)
 int OrgTree::recRead(ifstream& infile, TREENODEPTR parent) {
 	//read line
 	string line, title, name; 
-	if(getline(infile, line));
-
-	//check if the line was a ')'
-	if (line.find(')')==string::npos)return last;
-	int comma = line.find_first_of(','); //get index of the ','
-	title = line.substr(0, comma);
-	name = line.substr(comma + 2); //+2 for ',' and the ' ' space.
+	int comma;
+	
+	
 	//else hire new node
 
-	while (line.find(')') != string::npos) {
+	while (infile.peek() != ')') {
+		if(getline(infile, line));
+		else return parent;
 		comma = line.find_first_of(','); //get index of the ','
 		title = line.substr(0, comma);
 		name = line.substr(comma + 2); //+2 for ',' and the ' ' space.
-		hire(last, title, name);
-		cout << title << ": " << name<<endl;
-		recRead(infile, last);
-		getline(infile, line);
+		hire(parent, title, name);
+		recRead(infile, find(title)); //pass pointer to newly created node
 	}
+	getline(infile, line);
 	return last;
 }
 
