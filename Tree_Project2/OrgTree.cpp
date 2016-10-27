@@ -51,13 +51,15 @@ TREENODEPTR OrgTree::getRoot() {
 }
 
 TREENODEPTR OrgTree::leftmostChild(TREENODEPTR node) {
-	if (orgArr[node][0] == -1) return TREENULLPTR; // If the left child is null REDUNDANT
-	else return orgArr[node][0];
+	if (node != TREENULLPTR)
+		return orgArr[node][0];
+	else return TREENULLPTR;
 }
 
 TREENODEPTR OrgTree::rightSibling(TREENODEPTR node) {
-	if (orgArr[node][2] == -1) return TREENULLPTR; // If the right sibling is null REDUNDANT
-	else return orgArr[node][2];
+	if(node != TREENULLPTR)
+		return orgArr[node][2];
+	return TREENULLPTR;
 }
 
 TREENODEPTR OrgTree::find(string title) {
@@ -84,15 +86,15 @@ void OrgTree::hire(TREENODEPTR ptr, string newTitle, string newName) {
 	dataArr[last][1] = newName;//Update nodes Name
 	orgArr[last][1] = ptr; //Update node's Parent
 	//If left child does not exist
-	if (leftmostChild(ptr) == -1) {
+	if (leftmostChild(ptr) == TREENULLPTR) {
 		orgArr[ptr][0] = last;//Update the ptr left child
 	}
 	else {
 		//Else append right sibling
 		unsigned int rs = rightSibling(leftmostChild(ptr));
-		if (rs == -1) orgArr[leftmostChild(ptr)][2] = last; //If the left child node has no right sib
+		if (rs == TREENULLPTR) orgArr[leftmostChild(ptr)][2] = last; //If the left child node has no right sib
 		else {
-			while (rightSibling(rs) != -1) { //Loop until right sib is null
+			while (rightSibling(rs) != TREENULLPTR) { //Loop until right sib is null
 				rs = rightSibling(rs);
 			}
 			orgArr[rs][2] = last; //Update the right sibling col to reflect new node
@@ -110,13 +112,13 @@ void OrgTree::printSubTree(TREENODEPTR subTreeRoot) {
 void OrgTree::recPrint(TREENODEPTR subTreeRoot, int spaceFactor){
 	const string INDENT = "    "; //used for alignment of output
 								   // If the node exists, print contents
-	if (subTreeRoot != -1) {
+	if (subTreeRoot != TREENULLPTR) {
 		printData(subTreeRoot, true);
 	}
 	else return;
 	//Print the left child if it exists
 	int leftChild = leftmostChild(subTreeRoot);
-	if (leftChild == -1) return;
+	if (leftChild == TREENULLPTR) return;
 
 	for (int i = 0; i < spaceFactor+1; i++) {
 		cout << INDENT;
@@ -125,7 +127,7 @@ void OrgTree::recPrint(TREENODEPTR subTreeRoot, int spaceFactor){
 	
 	//Print the right sib if it exists
 	int rs = rightSibling(leftChild);
-	while (rs != -1) { //Loop until right sib is null
+	while (rs != TREENULLPTR) { //Loop until right sib is null
 		cout << INDENT;
 		for (int i = 0; i < spaceFactor; i++) {
 			cout << INDENT;
@@ -154,7 +156,7 @@ void OrgTree::recWrite(ofstream& outfile, TREENODEPTR subTreeRoot) {
 
 	const string CLOSE = ")"; //used for formating output
 								  
-	if (subTreeRoot != -1) {// If the node exists, print contents
+	if (subTreeRoot != TREENULLPTR) {// If the node exists, print contents
 		outfile << printData(subTreeRoot, false) << endl;
 	}
 	else { //Else the node doesn't exist, return
@@ -164,7 +166,7 @@ void OrgTree::recWrite(ofstream& outfile, TREENODEPTR subTreeRoot) {
 
 	//Write the left child if it exists
 	int leftChild = leftmostChild(subTreeRoot);
-	if (leftChild == -1) {
+	if (leftChild == TREENULLPTR) {
 		outfile << CLOSE <<endl;
 		return;
 	}
@@ -172,7 +174,7 @@ void OrgTree::recWrite(ofstream& outfile, TREENODEPTR subTreeRoot) {
 
 	//Write the right sib if it exists
 	int rs = rightSibling(leftChild);
-	while (rs != -1) { //Loop until right sib is null
+	while (rs != TREENULLPTR) { //Loop until right sib is null
 		recWrite(outfile, rs);
 		rs = rightSibling(rs);
 	}
@@ -191,7 +193,9 @@ bool OrgTree::read(string filename)
 	//Else reinit everything and call helper
 	factor = 1;
 	last = 0;
-	root = -1;
+	root = TREENULLPTR;
+	orgArr.clear();
+	dataArr.clear();
 	orgArr.resize(ROWS, vector<int>(ORGCOLS, TREENULLPTR));
 	dataArr.resize(ROWS, vector<string>(DATACOLS, ""));
 
@@ -224,6 +228,43 @@ int OrgTree::recRead(ifstream& infile, TREENODEPTR parent) {
 
 bool OrgTree::fire(string formerTitle)
 {
-	return false;
+	TREENODEPTR deletedsParent, deletedsLC, deletedsRS, deletedsSib, indx = find(formerTitle);
+	if(getRoot() == indx || indx == TREENULLPTR) //cannot delete root
+		return false;
+	
+	deletedsParent = orgArr[indx][1];  //init deleted node's parent ptr
+	deletedsLC = leftmostChild(indx); //init deteled node's left child ptr
+	deletedsRS = rightSibling(indx); //init deleted node's right sib
+	
+	//Change children's parent pointers to deleted node's parent
+	if (deletedsLC != TREENULLPTR) {
+		orgArr[deletedsLC][1] = deletedsParent;
+		int nextChild = rightSibling(deletedsLC);
+
+		while (nextChild != TREENULLPTR) { //So long as the deleted node has children, fix their pointers
+			orgArr[nextChild][1] = deletedsParent;
+			nextChild = rightSibling(deletedsLC);
+		}
+	}
+
+	//Change delted node's parent's pointer if LC = indx
+	if (leftmostChild(deletedsParent) == indx) 
+		orgArr[deletedsParent][0] = rightSibling(indx);
+	
+	else{//Else loop until we're right before deleted node
+		deletedsSib = leftmostChild(deletedsParent);
+		while (deletedsSib != indx) {
+			cout << deletedsSib;
+			deletedsSib = rightSibling(deletedsSib); //increment deletedsSib
+		}
+		orgArr[deletedsSib][2] = rightSibling(indx); //Pass deleted's right sib pointer to preceeding node's right sib ptr
+	}
+	//Clear all data of deleted
+	orgArr[indx][0] = TREENULLPTR;
+	orgArr[indx][1] = TREENULLPTR;
+	orgArr[indx][2] = TREENULLPTR;
+	dataArr[indx][0] = TREENULLPTR;
+	dataArr[indx][1] = TREENULLPTR;
+	return true;
 }
 

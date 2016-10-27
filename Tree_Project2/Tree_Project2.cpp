@@ -10,7 +10,7 @@ int main()
 {
 	OrgTree t = OrgTree();
 	//cout << t.dataArr.size() << endl;
-	/*
+	
 	t.addRoot("President", "Jubal");
 	t.addRoot("CEO", "Monica May");
 	t.hire(t.getRoot(), "Secretary", "Bill");
@@ -36,16 +36,23 @@ int main()
 	t.printData(t.rightSibling(0), true);
 
 
-	t.printSubTree(1);
+	//t.printSubTree(1);
 	cout << endl;
 	//cout << " Jubal's Parent: "+t.orgArr[0][1] << endl;
 
 	t.write("OutputFile.txt");
-	*/
+	
 	t.read("Input.txt");
 	t.printSubTree(0);
 
-
+	cout << endl;
+	
+	t.fire("Software Engineer II");
+	int i = t.find("Software Engineer I");
+	i = t.rightSibling(i);
+	cout << i;
+	cout << endl;
+	t.printSubTree(0);
 	system("pause");
 	return 0;
 }
