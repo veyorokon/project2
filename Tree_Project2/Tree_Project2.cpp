@@ -25,7 +25,7 @@ int main()
 	t.printData(t.getRoot(), true);
 
 	t.checkResizeTree(true, true);
-	cout << "size: " + to_string(t.dataArr.size()) << endl;
+	cout << "size: " + to_string(t.getSize()) << endl;
 
 	cout << "Left Child Test: " + to_string(t.leftmostChild(1)) << endl;
 	cout << "Root: " + to_string(t.getRoot()) << endl;
@@ -43,6 +43,8 @@ int main()
 	t.write("OutputFile.txt");
 	
 	t.read("Input.txt");
+	cout << "size: " + to_string(t.getSize()) << endl;
+
 	t.printSubTree(0);
 
 	cout << endl;
@@ -53,6 +55,8 @@ int main()
 	cout << i;
 	cout << endl;
 	t.printSubTree(0);
+	cout << "size: " + to_string(t.getSize()) << endl;
+
 	system("pause");
 	return 0;
 }
