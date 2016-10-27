@@ -49,7 +49,7 @@ int main()
 
 	cout << endl;
 	
-	t.fire("VP Software Development");
+	//t.fire("VP Software Development");
 	int i = t.find("Software Engineer I");
 	i = t.rightSibling(i);
 	cout << i;
@@ -57,7 +57,11 @@ int main()
 	t.printSubTree(0);
 	cout << "size: " + to_string(t.getSize()) << endl;
 	cout << "Root: " + to_string(t.getRoot()) << endl;
-	t.fire("Software Engineer I");
+	t.fire("Cloud Development");
+	t.hire(t.getRoot(), "TEST", "TEST");
+	t.hire(t.getRoot(), "YAYAY", "NEW");
+	t.printSubTree(t.getRoot());
+	cout << to_string(t.find("j"));
 	system("pause");
 	return 0;
 }

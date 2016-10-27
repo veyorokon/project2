@@ -74,8 +74,8 @@ TREENODEPTR OrgTree::rightSibling(TREENODEPTR node) {
 TREENODEPTR OrgTree::find(string title) {
 	string current = dataArr[0][0];
 	int indx = 0;
-	while (indx < dataArr.size()) {
-		//cout << "CURRENT: " << current << ". TITLE: " << title << ". INDX: " << indx << endl;
+	while (indx < last) {
+		cout << "CURRENT: " << current << ". TITLE: " << title << ". INDX: " << indx << endl;
 		if (current == title)return indx;
 		indx++;
 		if(indx < dataArr.size()) current = dataArr[indx][0];

@@ -19,6 +19,8 @@ private:
 	unsigned int last;
 	int root;
 	int deleted;
+	/*indexQueue is an attempt to control deletion bug and prevent
+	searching through*/
 	MagicBag<int> indexQueue;
 public:
 	
