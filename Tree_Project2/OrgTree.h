@@ -17,6 +17,7 @@ private:
 	int factor;
 	unsigned int last;
 	int root;
+	int deleted;
 public:
 	/*Our 2D array to keep track of tree organization:
 	Left child, Parent, Right Sibling */

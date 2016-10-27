@@ -2,21 +2,23 @@
 #pragma once
 #include "OrgTree.h"
 using namespace std;
-
+/* Theta 2n */
 OrgTree::OrgTree()
 {
+	deleted = 0;
 	factor = 1; // Tracks the resize factor
 	last = 0; // Keeps track of last row and count
 	root = -1; // Row index for the root node
-	orgArr.resize(ROWS, vector<int>(ORGCOLS, TREENULLPTR));
-	dataArr.resize(ROWS, vector<string>(DATACOLS, ""));
+	orgArr.resize(ROWS, vector<int>(ORGCOLS, TREENULLPTR));//matrix to store organization
+	dataArr.resize(ROWS, vector<string>(DATACOLS, "")); //matrix to store title, name
 }
-
+/*Theta n */
 OrgTree::~OrgTree()
 {
 	vector<vector<int>>().swap(orgArr);
 	vector<vector<string>>().swap(dataArr);
 }
+/*Theta 1 */
 void OrgTree::addRoot(string title, string name) {
 	//Create new root
 	dataArr[last][0]=(title); //Col 0 is for the title
@@ -31,6 +33,7 @@ void OrgTree::addRoot(string title, string name) {
 	last++;
 	checkResizeTree(false, true); //if max rows, resize vectors
 }
+/*Theta 1 */
 void OrgTree::checkResizeTree(bool forceResize, bool increase) {
 	if (last + 1 == ROWS*factor || forceResize) {
 		if(increase)
@@ -41,27 +44,27 @@ void OrgTree::checkResizeTree(bool forceResize, bool increase) {
 	}
 	else return;
 }
-
+/* Theta 1 */
 unsigned int OrgTree::getSize() {
-	return last;
+	return last-deleted;
 }
-
+/* Theta 1 */
 TREENODEPTR OrgTree::getRoot() {
 	return root;
 }
-
+/* Theta 1 */
 TREENODEPTR OrgTree::leftmostChild(TREENODEPTR node) {
 	if (node != TREENULLPTR)
 		return orgArr[node][0];
 	else return TREENULLPTR;
 }
-
+/* Theta 1 */
 TREENODEPTR OrgTree::rightSibling(TREENODEPTR node) {
 	if(node != TREENULLPTR)
 		return orgArr[node][2];
 	return TREENULLPTR;
 }
-
+/* Theta n */
 TREENODEPTR OrgTree::find(string title) {
 	string current = dataArr[0][0];
 	int indx = 0;
@@ -73,7 +76,7 @@ TREENODEPTR OrgTree::find(string title) {
 	}
 	return TREENULLPTR;
 }
-
+/* Theta n */
 void OrgTree::hire(TREENODEPTR ptr, string newTitle, string newName) {
 	//check if root exists, if not just create it and return
 	if (root == TREENULLPTR) {
@@ -105,10 +108,11 @@ void OrgTree::hire(TREENODEPTR ptr, string newTitle, string newName) {
 	checkResizeTree(false, true);
 }
 
+/*Theta 1 - just calls helper */
 void OrgTree::printSubTree(TREENODEPTR subTreeRoot) {
 	recPrint(subTreeRoot, 0);
 }
-
+/*Theta n^2 */
 void OrgTree::recPrint(TREENODEPTR subTreeRoot, int spaceFactor){
 	const string INDENT = "    "; //used for alignment of output
 								   // If the node exists, print contents
@@ -136,7 +140,7 @@ void OrgTree::recPrint(TREENODEPTR subTreeRoot, int spaceFactor){
 		rs = rightSibling(rs);
 	}
 }
-
+/*Theta 1 */
 string OrgTree::printData(TREENODEPTR node, bool consolePrint) {
 	string data = dataArr[node][0] + ", " + dataArr[node][1];
 	if(consolePrint)
@@ -144,7 +148,7 @@ string OrgTree::printData(TREENODEPTR node, bool consolePrint) {
 	return data;
 }
 
-
+/*Theta 1 - just calls helper. */
 void OrgTree::write(string filename)
 {
 	ofstream outfile(filename);
@@ -152,6 +156,7 @@ void OrgTree::write(string filename)
 	outfile.close();
 }
 
+/*Theta n^2 */
 void OrgTree::recWrite(ofstream& outfile, TREENODEPTR subTreeRoot) {
 
 	const string CLOSE = ")"; //used for formating output
@@ -181,6 +186,7 @@ void OrgTree::recWrite(ofstream& outfile, TREENODEPTR subTreeRoot) {
 	outfile << CLOSE <<endl; //Write the final close
 }
 
+/*Theta 1 - just calls the helper */
 bool OrgTree::read(string filename)
 {
 	ifstream infile(filename);
@@ -204,7 +210,7 @@ bool OrgTree::read(string filename)
 	infile.close();
 	return true;
 }
-
+/*Theta n^2 - Helper function */
 int OrgTree::recRead(ifstream& infile, TREENODEPTR parent) {
 	//read line
 	string line, title, name; 
@@ -226,6 +232,7 @@ int OrgTree::recRead(ifstream& infile, TREENODEPTR parent) {
 	return last;
 }
 
+/*Theta 2n */
 bool OrgTree::fire(string formerTitle)
 {
 	TREENODEPTR deletedsParent, deletedsLC, deletedsRS, deletedsSib, indx = find(formerTitle);
@@ -243,7 +250,7 @@ bool OrgTree::fire(string formerTitle)
 
 		while (nextChild != TREENULLPTR) { //So long as the deleted node has children, fix their pointers
 			orgArr[nextChild][1] = deletedsParent;
-			nextChild = rightSibling(deletedsLC);
+			nextChild = rightSibling(nextChild);
 		}
 	}
 
@@ -253,11 +260,21 @@ bool OrgTree::fire(string formerTitle)
 	
 	else{//Else loop until we're right before deleted node
 		deletedsSib = leftmostChild(deletedsParent);
-		while (deletedsSib != indx) {
-			cout << deletedsSib;
+		while (rightSibling(deletedsSib) != indx) {
+			//cout << deletedsSib;
 			deletedsSib = rightSibling(deletedsSib); //increment deletedsSib
 		}
-		orgArr[deletedsSib][2] = rightSibling(indx); //Pass deleted's right sib pointer to preceeding node's right sib ptr
+		if (deletedsLC != TREENULLPTR) {/*If the deleted node has children,
+										shift the entire subtree up one level to insert
+										children where the deleted node was*/
+			int nextchild = deletedsLC;
+			while (rightSibling(nextchild) != TREENULLPTR) {
+				nextchild = rightSibling(nextchild);
+			}
+			orgArr[nextchild][2] = orgArr[indx][2];
+			orgArr[deletedsSib][2] = deletedsLC;
+		}
+		else orgArr[deletedsSib][2] = orgArr[indx][2]; //Else set preceding sibling's right sib to deleteds rs
 	}
 	//Clear all data of deleted
 	orgArr[indx][0] = TREENULLPTR;
@@ -265,6 +282,7 @@ bool OrgTree::fire(string formerTitle)
 	orgArr[indx][2] = TREENULLPTR;
 	dataArr[indx][0] = TREENULLPTR;
 	dataArr[indx][1] = TREENULLPTR;
+	deleted++;
 	return true;
 }
 

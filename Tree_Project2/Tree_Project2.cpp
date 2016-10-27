@@ -47,7 +47,7 @@ int main()
 
 	cout << endl;
 	
-	t.fire("Software Engineer II");
+	t.fire("VP Software Development");
 	int i = t.find("Software Engineer I");
 	i = t.rightSibling(i);
 	cout << i;
