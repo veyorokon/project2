@@ -5,6 +5,7 @@ using namespace std;
 /* Theta 2n */
 OrgTree::OrgTree()
 {
+	
 	deleted = 0;
 	factor = 1; // Tracks the resize factor
 	last = 0; // Keeps track of last row and count
@@ -20,16 +21,21 @@ OrgTree::~OrgTree()
 }
 /*Theta 1 */
 void OrgTree::addRoot(string title, string name) {
+	int indx;
+	if (indexQueue.count >= 1) {
+		indx = indexQueue.draw();
+	}
+	else indx = last;
 	//Create new root
-	dataArr[last][0]=(title); //Col 0 is for the title
-	dataArr[last][1]=(name); //Col 1 is for the name
+	dataArr[indx][0]=(title); //Col 0 is for the title
+	dataArr[indx][1]=(name); //Col 1 is for the name
 
 	//If root != -1 we need to set previous root as left child of new root
 	if(root != -1) {
-		orgArr[root][1] = last; //Sets previous root's parent to new root 
-		orgArr[last][0] = root; //Sets new root's left child to previous root
+		orgArr[root][1] = indx; //Sets previous root's parent to new root 
+		orgArr[indx][0] = root; //Sets new root's left child to previous root
 	}
-	root = last; //Reassign the root pointer to new root index
+	root = indx; //Reassign the root pointer to new root index
 	last++;
 	checkResizeTree(false, true); //if max rows, resize vectors
 }
@@ -78,29 +84,37 @@ TREENODEPTR OrgTree::find(string title) {
 }
 /* Theta n */
 void OrgTree::hire(TREENODEPTR ptr, string newTitle, string newName) {
+	
+	
 	//check if root exists, if not just create it and return
 	if (root == TREENULLPTR) {
 		addRoot(newTitle, newName);
 		return;
 	}
+	//Get a deleted index if it exists.
+	int indx;
+	if (indexQueue.count >= 1) {
+		indx = indexQueue.draw();
+	}
+	else indx = last;
 
 	//Create the new node
-	dataArr[last][0] = newTitle;//Update node's Title
-	dataArr[last][1] = newName;//Update nodes Name
-	orgArr[last][1] = ptr; //Update node's Parent
+	dataArr[indx][0] = newTitle;//Update node's Title
+	dataArr[indx][1] = newName;//Update nodes Name
+	orgArr[indx][1] = ptr; //Update node's Parent
 	//If left child does not exist
 	if (leftmostChild(ptr) == TREENULLPTR) {
-		orgArr[ptr][0] = last;//Update the ptr left child
+		orgArr[ptr][0] = indx;//Update the ptr left child
 	}
 	else {
 		//Else append right sibling
 		unsigned int rs = rightSibling(leftmostChild(ptr));
-		if (rs == TREENULLPTR) orgArr[leftmostChild(ptr)][2] = last; //If the left child node has no right sib
+		if (rs == TREENULLPTR) orgArr[leftmostChild(ptr)][2] = indx; //If the left child node has no right sib
 		else {
 			while (rightSibling(rs) != TREENULLPTR) { //Loop until right sib is null
 				rs = rightSibling(rs);
 			}
-			orgArr[rs][2] = last; //Update the right sibling col to reflect new node
+			orgArr[rs][2] = indx; //Update the right sibling col to reflect new node
 		}
 	}
 	//increment and check if resize is necessary
@@ -282,6 +296,7 @@ bool OrgTree::fire(string formerTitle)
 	orgArr[indx][2] = TREENULLPTR;
 	dataArr[indx][0] = TREENULLPTR;
 	dataArr[indx][1] = TREENULLPTR;
+	indexQueue.insert(indx);
 	deleted++;
 	return true;
 }

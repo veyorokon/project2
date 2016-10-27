@@ -56,7 +56,8 @@ int main()
 	cout << endl;
 	t.printSubTree(0);
 	cout << "size: " + to_string(t.getSize()) << endl;
-
+	cout << "Root: " + to_string(t.getRoot()) << endl;
+	t.fire("Software Engineer I");
 	system("pause");
 	return 0;
 }

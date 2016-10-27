@@ -3,6 +3,7 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include "MagicBag_Eyorokon.h"
 #define TREENODEPTR int
 #define TREENULLPTR -1
 #define ROWS 50
@@ -18,7 +19,9 @@ private:
 	unsigned int last;
 	int root;
 	int deleted;
+	MagicBag<int> indexQueue;
 public:
+	
 	/*Our 2D array to keep track of tree organization:
 	Left child, Parent, Right Sibling */
 	vector <vector<int>> orgArr;
