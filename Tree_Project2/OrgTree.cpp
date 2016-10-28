@@ -30,7 +30,7 @@ void OrgTree::addRoot(string title, string name) {
 		while (indx > orgArr.size() && indexQueue.count >= 1) {
 			indx = indexQueue.draw(); // Toss Old Indices that are out of range.
 		}
-		if (indx < orgArr.size())
+		if (indx < orgArr.size()) //Basically if the index to recycle was old and is now out of range since shrinking
 			recycle = true;
 		else indx = last;
 	}
@@ -49,7 +49,7 @@ void OrgTree::addRoot(string title, string name) {
 		last++;
 	checkResizeTree(false, true); //if max rows, resize vectors
 }
-/*Theta 1 */
+/*Theta 1 - worst case: Theta 2N to resize both vectors and copy values */
 void OrgTree::checkResizeTree(bool forceResize, bool increase) {
 	int size = getSize(); //Number of nodes used
 
@@ -341,7 +341,7 @@ bool OrgTree::fire(string formerTitle)
 	dataArr[indx][1] = TREENULLPTR;
 	indexQueue.insert(indx); //Add deleted index to queue be reused
 	//cout << "Count of bag: " << indexQueue.count << endl;
-
+	checkResizeTree(false, false); // check if we should shrink
 	return true;
 }
 
