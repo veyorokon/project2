@@ -66,10 +66,10 @@ int main()
 	t.hire(0, "Cool guy", "Money bags");
 	//cout << "Index of new: " + to_string(t.rightSibling(13)) << endl;
 	t.printSubTree(t.getRoot());
-	t.checkResizeTree(true, false);
-	t.checkResizeTree(true, false);
-	t.checkResizeTree(true, false);
-	t.checkResizeTree(true, false);
+	t.checkResizeTree(false, false);
+	t.checkResizeTree(false, false);
+	t.checkResizeTree(false, false);
+	t.checkResizeTree(false, false);
 
 	cout << to_string(t.orgArr.size()) << endl;
 	t.fire("Software Engineer I");
