@@ -60,7 +60,7 @@ void OrgTree::checkResizeTree(bool forceResize, bool increase) {
 			dataArr.resize(ROWS*factor, vector<string>(DATACOLS, ""));
 		}
 		else { //We've shrunk it too much, undo
-			cout << "Cannot Shrink without losing data" << endl;
+			cout << "For safety, will not shrink to prevent potential data loss and allow adequate space for growth." << endl;
 			factor++;
 		}
 	}
@@ -313,7 +313,7 @@ bool OrgTree::fire(string formerTitle)
 	dataArr[indx][0] = TREENULLPTR;
 	dataArr[indx][1] = TREENULLPTR;
 	indexQueue.insert(indx); //Add deleted index to queue be reused
-	cout << "Count of bag: " << indexQueue.count << endl;
+	//cout << "Count of bag: " << indexQueue.count << endl;
 
 	return true;
 }
