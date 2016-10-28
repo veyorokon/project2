@@ -22,9 +22,9 @@ private:
 	int factor;
 	unsigned int last;
 	int root;
-	//int deleted;
 	/*indexQueue is an attempt to control deletion bug and prevent
-	searching through until most nodes ever created*/
+	searching through until most nodes ever created. This is done by 
+	controlling the index of newly created nodes and recycling deleted indices*/
 	MagicBag<int> indexQueue;
 public:
 	
