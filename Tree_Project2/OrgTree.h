@@ -1,0 +1,93 @@
+#pragma once
+#include <string>
+#include <vector>
+#include <iostream>
+#include <fstream>
+#include "MagicBag_Eyorokon.h"
+#define TREENODEPTR int
+#define TREENULLPTR -1
+#define ROWS 50
+#define ORGCOLS 3
+#define DATACOLS 2
+
+using namespace std;
+/*This class creates a tree structure to store data by using two vectors. The first stores string data
+of the employee titles and names. The second stores the organization of the tree. This data structure
+also features a linked list to keep track of deleted indices to be recycled and reused. This improves efficiency
+by allowing the find function to search up to the last used index. Worst case all nodes but the last have been
+deleted and this results in efficiency depending on the last used index, or the most nodes ever created.*/
+class OrgTree
+{
+private:
+	int factor;
+	unsigned int last;
+	int root;
+	//int deleted;
+	/*indexQueue is an attempt to control deletion bug and prevent
+	searching through until most nodes ever created*/
+	MagicBag<int> indexQueue;
+public:
+	
+	/*Our 2D array to keep track of tree organization:
+	Left child, Parent, Right Sibling */
+	vector <vector<int>> orgArr;
+
+	//Our 2D array to keep track of tree data: Title, Name
+	vector<vector<string>> dataArr;
+
+	/* Default Constructor */
+	OrgTree();
+	~OrgTree();
+
+	/* Creates a new node and adds it as the new root */
+	void addRoot(string, string);
+
+	/* Resize the Tree vectors by a new row factor */
+	void checkResizeTree(bool force, bool increase);
+
+	/* Returns the number of nodes in the tree */
+	unsigned int getSize();
+
+	/* Returns the root of the tree */
+	TREENODEPTR getRoot();
+
+	/* Returns the Left most child of a node */
+	TREENODEPTR leftmostChild(TREENODEPTR );
+
+	/* Returns the right sibling */
+	TREENODEPTR rightSibling(TREENODEPTR );
+
+	/* Returns index of specified title */
+	TREENODEPTR find(string title);
+
+	/*Inserts new employee as last child of node pointed to */
+	void hire(TREENODEPTR, string title, string name);
+
+	/* This function print out the structure of 
+	the specified subtree, and is paired with the recPrint*/
+	void printSubTree(TREENODEPTR );
+
+	/* Recursively print the tree. */
+	void recPrint(TREENODEPTR, int);
+
+	/* This function prints and returns the selected 
+	node in format of title, name */
+	string printData(TREENODEPTR node, bool consolePrint);
+
+	/*Recursively write to file where ')' designates the end of a subtree*/
+	void OrgTree::write(string filename);
+
+	/* Helper function to write to file*/
+	void OrgTree::recWrite(ofstream& filename, TREENODEPTR subTreeRoot);
+
+	/*Read from the file line by line and build tree where ')' designates the end of a subtree*/
+	bool OrgTree::read(string filename);
+
+	/*Helper function to read input file, also returns an integer to the parent node */
+	int recRead(ifstream & infile, TREENODEPTR subTreeRoot);
+
+	/*Removes the employee whos title matches from the tree so long 
+	as the formerTitle is not the root node*/
+	bool OrgTree::fire(string formerTitle);
+};
+
