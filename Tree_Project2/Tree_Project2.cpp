@@ -55,7 +55,7 @@ int main()
 	cout << i;
 	cout << endl;
 	t.printSubTree(0);
-	cout << "size: " + to_string(t.getSize()) << endl;
+	//cout << "size: " + to_string(t.getSize()) << endl;
 	cout << "Root: " + to_string(t.getRoot()) << endl;
 	t.fire("Cloud Development");
 	t.hire(t.getRoot(), "TEST", "TEST");
