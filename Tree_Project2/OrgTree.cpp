@@ -46,12 +46,23 @@ void OrgTree::addRoot(string title, string name) {
 }
 /*Theta 1 */
 void OrgTree::checkResizeTree(bool forceResize, bool increase) {
+	int diff,size = getSize(); //Number of nodes used
+	diff = orgArr.size() / 2; //Total space / 2
+
 	if (last + 1 == ROWS*factor || forceResize) {
 		if(increase)
 			factor++;
-		else factor--;
-		orgArr.resize(ROWS*factor, vector<int>(ORGCOLS, -1));
-		dataArr.resize(ROWS*factor, vector<string>(DATACOLS, ""));
+		else { 
+			factor--;
+		}
+		if (ROWS*factor > size) {//Only resize if the new size can hold all used elements
+			orgArr.resize(ROWS*factor, vector<int>(ORGCOLS, -1));
+			dataArr.resize(ROWS*factor, vector<string>(DATACOLS, ""));
+		}
+		else { //We've shrunk it too much, undo
+			cout << "Cannot Shrink without losing data" << endl;
+			factor++;
+		}
 	}
 	else return;
 }
