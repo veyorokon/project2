@@ -70,12 +70,12 @@ TREENODEPTR OrgTree::rightSibling(TREENODEPTR node) {
 		return orgArr[node][2];
 	return TREENULLPTR;
 }
-/* Theta n */
+/* Theta n where n is the largest index ever used */
 TREENODEPTR OrgTree::find(string title) {
 	string current = dataArr[0][0];
 	int indx = 0;
 	while (indx < last) {
-		cout << "CURRENT: " << current << ". TITLE: " << title << ". INDX: " << indx << endl;
+		//cout << "CURRENT: " << current << ". TITLE: " << title << ". INDX: " << indx << endl;
 		if (current == title)return indx;
 		indx++;
 		if(indx < dataArr.size()) current = dataArr[indx][0];
@@ -296,7 +296,7 @@ bool OrgTree::fire(string formerTitle)
 	orgArr[indx][2] = TREENULLPTR;
 	dataArr[indx][0] = TREENULLPTR;
 	dataArr[indx][1] = TREENULLPTR;
-	indexQueue.insert(indx);
+	indexQueue.insert(indx); //Add deleted index to queue be reused
 	deleted++;
 	return true;
 }
