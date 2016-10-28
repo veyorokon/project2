@@ -67,7 +67,7 @@ int main()
 	cout << "Index of new: " + to_string(t.rightSibling(13)) << endl;
 	t.printSubTree(t.getRoot());
 
-	t.fire("MagicBag Team Leader");
+	t.fire("Software Engineer I");
 	t.printSubTree(t.getRoot());
 	system("pause");
 	return 0;
